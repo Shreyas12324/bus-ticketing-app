@@ -53,7 +53,7 @@ const TripPage = () => {
   useEffect(() => {
     const fetchTripDetails = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/trips/${id}`);
+        const response = await axios.get(`/trips/${id}`);
         setTrip(response.data.trip);
         setSeatStatus(response.data.status);
       } catch (err) {
@@ -84,7 +84,8 @@ const TripPage = () => {
 
   useEffect(() => {
     // Connect to WebSocket
-    const websocket = new WebSocket('ws://localhost:8080');
+    const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
+    const websocket = new WebSocket(`${protocol}://${window.location.host}`);
     
     websocket.onopen = () => {
       console.log('WebSocket connected');
@@ -293,7 +294,7 @@ const TripPage = () => {
                 seatNumbers: selectedSeats,
                 ttlSeconds: 120,
               };
-              const res = await axios.post('http://localhost:3000/seats/hold', payload);
+              const res = await axios.post('/seats/hold', payload);
               const { held = [], conflicts = [] } = res.data || {};
               if (held.length > 0) {
                 setMessage({ type: 'success', text: `Held: ${held.join(', ')}${conflicts.length ? `; Conflicts: ${conflicts.join(', ')}` : ''}` });
@@ -330,7 +331,7 @@ const TripPage = () => {
                 seatNumbers: myHeldSeats,
                 email,
               };
-              const res = await axios.post('http://localhost:3000/seats/purchase', payload);
+              const res = await axios.post('/seats/purchase', payload);
               const purchased = res.data?.purchased || [];
               if (purchased.length > 0) {
                 const seats = purchased.map((p) => p.seatNumber);
@@ -344,7 +345,7 @@ const TripPage = () => {
                     id: `inv-${p.seatNumber}-${Date.now()}`,
                     text: `Invoice for ${p.seatNumber}`,
                     variant: 'success',
-                    link: `http://localhost:3000${p.invoiceLink}`,
+                    link: `${window.location.origin}${p.invoiceLink}`,
                   })),
                 ]);
               } else {

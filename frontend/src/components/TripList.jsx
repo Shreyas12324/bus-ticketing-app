@@ -22,7 +22,7 @@ const TripList = () => {
   useEffect(() => {
     const fetchTrips = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/trips');
+        const response = await axios.get('/trips');
         setTrips(response.data);
       } catch (err) {
         setError('Failed to fetch trips');
@@ -76,7 +76,7 @@ const TripList = () => {
         pricePerSeat: 25.5,
         saleDuration: 120,
       };
-      const res = await axios.post('http://localhost:3000/trips', payload);
+      const res = await axios.post('/trips', payload);
       navigate(`/trip/${res.data.id}`);
     } catch (e) {
       console.error('Auto-create trip failed', e);
