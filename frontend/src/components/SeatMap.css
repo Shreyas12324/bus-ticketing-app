@@ -1,0 +1,25 @@
+.seat {
+	border: 2px solid #333;
+}
+
+.seat-available {
+	border-color: #333;
+}
+
+.seat-held {
+	border-color: #fd7e14;
+}
+
+.seat-mine {
+	box-shadow: 0 0 0 2px rgba(13,110,253,0.6) inset;
+}
+
+.seat-sold {
+	border-color: #dc3545;
+}
+
+.seat-selected {
+	/* keep base border; no conflicting borderColor inline */
+}
+
+

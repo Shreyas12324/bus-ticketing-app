@@ -1,0 +1,87 @@
+:root {
+	--primary: #0d6efd;
+	--success: #198754;
+	--warning: #fd7e14;
+	--danger: #dc3545;
+	--muted: #6c757d;
+	--bg: #f8f9fa;
+}
+
+body {
+	margin: 0;
+	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+	background: var(--bg);
+}
+
+.app-container {
+	min-height: 100vh;
+}
+
+.header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 12px 20px;
+	background: rgba(255,255,255,0.9);
+	border-bottom: 1px solid #e9ecef;
+}
+
+.header .brand {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.header .brand img {
+	height: 32px;
+	width: 32px;
+	object-fit: contain;
+}
+
+.header .actions {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.button {
+	padding: 8px 14px;
+	border-radius: 6px;
+	border: none;
+	cursor: pointer;
+	background: var(--primary);
+	color: white;
+}
+
+.card-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+	gap: 16px;
+}
+
+.card {
+	background: rgba(255,255,255,0.9);
+	border: 1px solid #e9ecef;
+	border-radius: 10px;
+	padding: 16px;
+}
+
+.search-bar {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(160px, 1fr)) 140px;
+	gap: 12px;
+	padding: 16px;
+	background: rgba(255,255,255,0.9);
+	border-radius: 10px;
+	border: 1px solid #e9ecef;
+	margin-bottom: 20px;
+}
+
+.legend {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	margin-bottom: 12px;
+}
+
+

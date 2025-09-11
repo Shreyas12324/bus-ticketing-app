@@ -1,0 +1,12 @@
+{
+  "dependencies": {
+    "@sendgrid/mail": "^8.1.5",
+    "@upstash/redis": "^1.35.3",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.2",
+    "pdfkit": "^0.17.2",
+    "pg": "^8.16.3",
+    "sequelize": "^6.37.7",
+    "ws": "^8.18.3"
+  }
+}
