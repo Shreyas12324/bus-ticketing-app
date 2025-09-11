@@ -1,4 +1,5 @@
 const { Sequelize } = require('sequelize');
+const dns = require('dns');
 require('dotenv').config();
 
 // Initialize Sequelize with Supabase Postgres connection string
@@ -9,6 +10,10 @@ const sequelize = new Sequelize(process.env.SUPABASE_DB_URL, {
     ssl: {
       require: true,
       rejectUnauthorized: false,
+    },
+    // Force IPv4 DNS resolution to avoid ENETUNREACH on IPv6-only addresses in some hosts
+    lookup: (hostname, options, callback) => {
+      return dns.lookup(hostname, { ...options, family: 4, all: false }, callback);
     },
   },
 });
