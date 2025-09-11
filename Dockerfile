@@ -15,7 +15,7 @@ COPY . .
 # Install and build frontend if present
 RUN if [ -f "frontend/package.json" ]; then \
     cd frontend && npm install --no-audit --no-fund && \
-    PATH=$PATH:./node_modules/.bin npm run build; \
+    npx react-scripts build; \
   else \
     echo "No frontend detected, skipping frontend build"; \
   fi
