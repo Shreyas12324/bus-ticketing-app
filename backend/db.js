@@ -1,6 +1,6 @@
 const { Sequelize } = require('sequelize');
 const dns = require('dns');
-// Prefer IPv4 to avoid ENETUNREACH on hosts without IPv6
+// Force IPv4 resolution globally
 if (typeof dns.setDefaultResultOrder === 'function') {
   try {
     dns.setDefaultResultOrder('ipv4first');
@@ -8,6 +8,16 @@ if (typeof dns.setDefaultResultOrder === 'function') {
     // ignore if not supported
   }
 }
+
+// Override DNS lookup to force IPv4
+const originalLookup = dns.lookup;
+dns.lookup = function(hostname, options, callback) {
+  if (typeof options === 'function') {
+    callback = options;
+    options = {};
+  }
+  return originalLookup(hostname, { ...options, family: 4 }, callback);
+};
 require('dotenv').config();
 
 // Initialize Sequelize with Supabase Postgres connection string
