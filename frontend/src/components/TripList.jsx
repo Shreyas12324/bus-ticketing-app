@@ -54,7 +54,7 @@ const TripList = () => {
   const handleSearch = async () => {
     setHasSearched(true);
     if (!userId) {
-      alert('Please enter a User ID before booking.');
+      alert('Please enter a User ID before booking. You can type any number or name — it’s just for demo to simulate different users.');
       return;
     }
     localStorage.setItem('userId', String(userId));

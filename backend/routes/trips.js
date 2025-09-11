@@ -75,6 +75,18 @@ router.get('/trips/:id', async (req, res) => {
 	}
 });
 
+// Admin/dev utility: reset all purchases for a trip (dangerous; for demos)
+router.post('/trips/:id/reset-purchases', async (req, res) => {
+  try {
+    const id = parseInt(req.params.id, 10);
+    if (!id) return res.status(400).json({ error: 'Invalid trip id' });
+    const deleted = await Purchase.destroy({ where: { tripId: id } });
+    return res.json({ ok: true, deleted });
+  } catch (e) {
+    return res.status(500).json({ error: 'Failed to reset purchases', details: e.message });
+  }
+});
+
 module.exports = router;
 
 

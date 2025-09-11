@@ -375,6 +375,24 @@ const TripPage = () => {
             style={{ padding: '8px', border: '1px solid rgba(255,255,255,0.35)', borderRadius: '6px', background: 'rgba(0,0,0,0.25)', color: '#fff' }}
           />
         </div>
+
+        <button
+          onClick={async () => {
+            if (!confirm('Reset all purchases for this trip? This will make all sold seats available again.')) return;
+            try {
+              await axios.post(`/trips/${id}/reset-purchases`);
+              setMessage({ type: 'success', text: 'Trip reset! All seats are now available.' });
+              // Refresh trip data
+              const response = await axios.get(`/trips/${id}`);
+              setSeatStatus(response.data.status);
+            } catch (err) {
+              setMessage({ type: 'error', text: 'Failed to reset trip' });
+            }
+          }}
+          style={{ padding: '8px 14px', background: '#dc3545', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', boxShadow: '0 6px 12px rgba(220,53,69,0.35)' }}
+        >
+          Reset Trip (Demo)
+        </button>
       </div>
 
       <SeatMap

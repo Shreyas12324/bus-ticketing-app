@@ -1,6 +1,8 @@
 const PDFDocument = require('pdfkit');
 const sgMail = require('@sendgrid/mail');
 
+const EMAIL_ENABLED = String(process.env.EMAIL_ENABLED || 'true').toLowerCase() === 'true';
+
 // Expect SENDGRID_API_KEY and EMAIL_FROM in env
 if (process.env.SENDGRID_API_KEY) {
 	sgMail.setApiKey(process.env.SENDGRID_API_KEY);
