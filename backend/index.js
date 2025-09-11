@@ -2,6 +2,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const path = require('path');
 require('dotenv').config();
 
 const { initializeDatabase } = require('./db');
@@ -23,6 +24,9 @@ app.use(cors({
 	credentials: true,
 }));
 
+// Serve static files from React build
+app.use(express.static(path.join(__dirname, 'public')));
+
 // Health check route
 app.get('/health', (req, res) => {
 	res.status(200).json({ status: 'ok' });
@@ -33,15 +37,15 @@ app.get('/keep-alive', (req, res) => {
 	res.status(200).json({ ok: true, ts: Date.now() });
 });
 
-// Root route placeholder
-app.get('/', (req, res) => {
-	res.send('Bus Ticketing API is running');
-});
-
 // Mount routers
 app.use('/', tripsRouter);
 app.use('/', seatsRouter);
 app.use('/', purchasesRouter);
+
+// Serve React app for all non-API routes (must be last)
+app.get('*', (req, res) => {
+	res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
 
 const PORT = process.env.PORT || 3000;
 
