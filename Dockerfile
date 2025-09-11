@@ -1,44 +1,37 @@
-# Production-ready Dockerfile for combined frontend + backend
-# - Builds frontend (if present) and backend
-# - Copies frontend build into backend static directory
-# - Runs backend on port 3000
-
-FROM node:18-alpine AS build
+# Stage 1: Build
+FROM node:18-bullseye AS build
 WORKDIR /app
 
-# Install essential build tools
-RUN apk add --no-cache bash git python3 make g++ 
-
-# Copy everything
+# Copy entire repo
 COPY . .
 
-# Install and build frontend if present
+# Install frontend deps and build if present
 RUN if [ -f "frontend/package.json" ]; then \
-    cd frontend && npm install --no-audit --no-fund && \
-    npx react-scripts build; \
+    cd frontend && npm ci --no-audit --no-fund && \
+    npm run build; \
   else \
     echo "No frontend detected, skipping frontend build"; \
   fi
 
-# Install backend deps (production only)
+# Install backend production dependencies
 RUN cd backend && npm ci --only=production --no-audit --no-fund
 
-# Runtime image
-FROM node:18-alpine AS runtime
+# Stage 2: Runtime
+FROM node:18-bullseye-slim AS runtime
 WORKDIR /app
 
 # Copy backend runtime
 COPY --from=build /app/backend ./backend
 
-# Copy frontend build into backend public directory if produced
+# Copy frontend build into backend public directory if it exists
 RUN mkdir -p /app/backend/public \
-  && if [ -d "/app/frontend/build" ]; then \
-       cp -r /app/frontend/build/* /app/backend/public/; \
-     elif [ -d "/app/frontend/dist" ]; then \
-       cp -r /app/frontend/dist/* /app/backend/public/; \
-     else \
-       echo "No frontend build artifacts found"; \
-     fi
+    && if [ -d "/app/frontend/build" ]; then \
+         cp -r /app/frontend/build/* /app/backend/public/; \
+       elif [ -d "/app/frontend/dist" ]; then \
+         cp -r /app/frontend/dist/* /app/backend/public/; \
+       else \
+         echo "No frontend build artifacts found"; \
+       fi
 
 ENV NODE_ENV=production
 EXPOSE 3000
