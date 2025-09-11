@@ -8,7 +8,8 @@ WORKDIR /app
 
 # --- Frontend build ---
 COPY frontend/package.json frontend/package-lock.json ./frontend/
-RUN cd frontend && npm ci --no-audit --no-fund
+# Use npm install to avoid strict lockfile requirements in CI images
+RUN cd frontend && npm install --no-audit --no-fund
 COPY frontend ./frontend
 RUN cd frontend && npm run build
 
