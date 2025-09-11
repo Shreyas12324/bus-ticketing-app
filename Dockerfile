@@ -1,12 +1,12 @@
 # Production-ready Dockerfile for combined frontend + backend
-# - Builds frontend (if present) and backend
-# - Copies frontend build into backend static directory
-# - Runs backend on port 3000
 
-FROM node:18 AS build
+FROM node:18-alpine AS build
 WORKDIR /app
 
-# Copy entire repo (simplifies optional frontend build logic)
+# Install build dependencies
+RUN apk add --no-cache bash git
+
+# Copy entire repo
 COPY . .
 
 # Install and build frontend if present
@@ -19,7 +19,6 @@ RUN if [ -f "frontend/package.json" ]; then \
 # Install backend deps (production)
 RUN cd backend && npm ci --only=production --no-audit --no-fund
 
-# Runtime image
 FROM node:18-alpine AS runtime
 WORKDIR /app
 
@@ -40,5 +39,3 @@ ENV NODE_ENV=production
 EXPOSE 3000
 
 CMD ["node", "backend/index.js"]
-
-
