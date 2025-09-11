@@ -3,7 +3,7 @@
 # - Copies frontend build into backend static directory
 # - Runs backend on port 3000
 
-FROM node:18-alpine AS build
+FROM node:18 AS build
 WORKDIR /app
 
 # Copy entire repo (simplifies optional frontend build logic)
