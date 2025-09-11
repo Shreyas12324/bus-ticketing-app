@@ -6,18 +6,17 @@
 FROM node:18-alpine AS build
 WORKDIR /app
 
-# Copy entire repo (simplifies optional frontend build logic)
-COPY . .
+# --- Frontend build ---
+COPY frontend/package.json frontend/package-lock.json ./frontend/
+# Use npm install to avoid strict lockfile requirements in CI images
+RUN cd frontend && npm install --no-audit --no-fund
+COPY frontend ./frontend
+RUN cd frontend && npm run build
 
-# Install and build frontend if present
-RUN if [ -f "frontend/package.json" ]; then \
-	  cd frontend && npm ci --no-audit --no-fund && npm run build; \
-	else \
-	  echo "No frontend detected, skipping frontend build"; \
-	fi
-
-# Install backend deps (production)
-RUN cd backend && npm ci --only=production --no-audit --no-fund
+# --- Backend install (production deps only) ---
+COPY backend/package.json backend/package-lock.json ./backend/
+RUN cd backend && npm ci --omit=dev --no-audit --no-fund
+COPY backend ./backend
 
 # Runtime image
 FROM node:18-alpine AS runtime
@@ -26,15 +25,9 @@ WORKDIR /app
 # Copy backend runtime
 COPY --from=build /app/backend ./backend
 
-# Copy frontend build into backend public directory if produced
-RUN mkdir -p /app/backend/public \
-	&& if [ -d "/app/frontend/build" ]; then \
-	  cp -r /app/frontend/build/* /app/backend/public/; \
-	elif [ -d "/app/frontend/dist" ]; then \
-	  cp -r /app/frontend/dist/* /app/backend/public/; \
-	else \
-	  echo "No frontend build artifacts found"; \
-	fi
+# Copy frontend build into backend public directory
+RUN mkdir -p /app/backend/public
+COPY --from=build /app/frontend/build/ /app/backend/public/
 
 ENV NODE_ENV=production
 EXPOSE 3000
