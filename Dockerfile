@@ -13,9 +13,9 @@ RUN cd frontend && npm install --no-audit --no-fund
 COPY frontend ./frontend
 RUN cd frontend && npm run build
 
-# --- Backend install (production deps only) ---
-COPY backend/package.json backend/package-lock.json ./backend/
-RUN cd backend && npm ci --omit=dev --no-audit --no-fund
+    # --- Backend install (production deps only) ---
+    COPY backend/package.json ./backend/
+    RUN cd backend && npm install --omit=dev --no-audit --no-fund
 COPY backend ./backend
 
 # Runtime image
