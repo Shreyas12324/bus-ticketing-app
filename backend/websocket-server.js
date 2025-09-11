@@ -1,45 +1,53 @@
 const WebSocket = require('ws');
 
-// Create a WebSocket server on port 8080
-const wss = new WebSocket.Server({ port: 8080 });
+let wss = null;
+let heartbeatInterval = null;
 
-wss.on('connection', (ws) => {
-	ws.isAlive = true;
+function attachWebSocket(server) {
+  // Attach WebSocket server to existing HTTP/S server (same port as Express)
+  wss = new WebSocket.Server({ server });
 
-	ws.on('pong', () => {
-		ws.isAlive = true;
-	});
+  wss.on('connection', (ws) => {
+    ws.isAlive = true;
 
-	ws.on('message', () => {
-		// No-op: server is broadcast-only for now
-	});
-});
+    ws.on('pong', () => {
+      ws.isAlive = true;
+    });
 
-// Heartbeat to terminate dead connections
-const interval = setInterval(() => {
-	wss.clients.forEach((ws) => {
-		if (ws.isAlive === false) return ws.terminate();
-		ws.isAlive = false;
-		ws.ping(() => {});
-	});
-}, 30000);
+    ws.on('message', () => {
+      // No-op: server is broadcast-only for now
+    });
+  });
 
-wss.on('close', () => {
-	clearInterval(interval);
-});
+  // Heartbeat to terminate dead connections
+  heartbeatInterval = setInterval(() => {
+    wss.clients.forEach((ws) => {
+      if (ws.isAlive === false) return ws.terminate();
+      ws.isAlive = false;
+      ws.ping(() => {});
+    });
+  }, 30000);
+
+  wss.on('close', () => {
+    if (heartbeatInterval) clearInterval(heartbeatInterval);
+  });
+
+  return wss;
+}
 
 function broadcastSeatUpdate(update) {
-	const payload = JSON.stringify(update);
-	for (const client of wss.clients) {
-		if (client.readyState === WebSocket.OPEN) {
-			client.send(payload);
-		}
-	}
+  if (!wss) return;
+  const payload = JSON.stringify(update);
+  for (const client of wss.clients) {
+    if (client.readyState === WebSocket.OPEN) {
+      client.send(payload);
+    }
+  }
 }
 
 module.exports = {
-	wss,
-	broadcastSeatUpdate,
+  attachWebSocket,
+  broadcastSeatUpdate,
 };
 
 

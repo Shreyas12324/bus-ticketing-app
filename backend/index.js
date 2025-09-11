@@ -6,6 +6,8 @@ const path = require('path');
 require('dotenv').config();
 
 const { initializeDatabase } = require('./db');
+const http = require('http');
+const { attachWebSocket } = require('./websocket-server');
 
 // Routers
 const tripsRouter = require('./routes/trips');
@@ -50,7 +52,9 @@ app.get('*', (req, res) => {
 const PORT = process.env.PORT || 3000;
 
 initializeDatabase().then(() => {
-	app.listen(PORT, () => {
+	const server = http.createServer(app);
+	attachWebSocket(server);
+	server.listen(PORT, () => {
 		console.log(`Server listening on port ${PORT}`);
 	});
 }).catch((err) => {
