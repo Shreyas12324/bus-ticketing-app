@@ -6,18 +6,19 @@
 FROM node:18-alpine AS build
 WORKDIR /app
 
-# Install essential tools for the build
-RUN apk add --no-cache bash git
+# Install essential build tools
+RUN apk add --no-cache bash git python3 make g++ 
 
-# Copy entire repo (simplifies optional frontend build logic)
+# Copy everything
 COPY . .
 
 # Install and build frontend if present
 RUN if [ -f "frontend/package.json" ]; then \
-	  cd frontend && npm install --no-audit --no-fund && npm run build; \
-	else \
-	  echo "No frontend detected, skipping frontend build"; \
-	fi
+    cd frontend && npm install --no-audit --no-fund && \
+    PATH=$PATH:./node_modules/.bin npm run build; \
+  else \
+    echo "No frontend detected, skipping frontend build"; \
+  fi
 
 # Install backend deps (production only)
 RUN cd backend && npm ci --only=production --no-audit --no-fund
@@ -31,13 +32,13 @@ COPY --from=build /app/backend ./backend
 
 # Copy frontend build into backend public directory if produced
 RUN mkdir -p /app/backend/public \
-	&& if [ -d "/app/frontend/build" ]; then \
-	  cp -r /app/frontend/build/* /app/backend/public/; \
-	elif [ -d "/app/frontend/dist" ]; then \
-	  cp -r /app/frontend/dist/* /app/backend/public/; \
-	else \
-	  echo "No frontend build artifacts found"; \
-	fi
+  && if [ -d "/app/frontend/build" ]; then \
+       cp -r /app/frontend/build/* /app/backend/public/; \
+     elif [ -d "/app/frontend/dist" ]; then \
+       cp -r /app/frontend/dist/* /app/backend/public/; \
+     else \
+       echo "No frontend build artifacts found"; \
+     fi
 
 ENV NODE_ENV=production
 EXPOSE 3000
