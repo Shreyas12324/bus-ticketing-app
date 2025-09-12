@@ -46,10 +46,7 @@ docker run -p 3000:3000 \
 ```
 
 ### Keep-Alive (cron-job.org)
-Example job hitting every 5 minutes:
-```
-https://your-domain.example.com/keep-alive
-```
+
 Direct URL example:
 ```
 https://cron-job.org/en/members/jobs/add?url=https%3A%2F%2Fyour-domain.example.com%2Fkeep-alive&schedule=*/5+*+*+*+*
