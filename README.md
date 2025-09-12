@@ -6,7 +6,7 @@ Production-ready backend-first ticketing system with seat holds, purchases, PDF 
 - Node.js (Express)
 - Sequelize + PostgreSQL (Supabase-compatible)
 - Upstash Redis (REST)
-- WebSocket server
+- WebSocket over same HTTP port (Render-friendly)
 - SendGrid + PDFKit
 - Docker (multi-stage)
 
@@ -24,6 +24,7 @@ Production-ready backend-first ticketing system with seat holds, purchases, PDF 
 - `SUPABASE_DB_URL`
 - `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN`
 - `SENDGRID_API_KEY`, `EMAIL_FROM`
+ - `EMAIL_ENABLED` (optional; defaults to true)
 
 ### Run Locally
 ```bash
@@ -35,7 +36,7 @@ node index.js
 ### Docker
 ```bash
 docker build -t bus-ticketing-app .
-docker run -p 3000:3000 -p 8080:8080 \
+docker run -p 3000:3000 \
   -e SUPABASE_DB_URL=postgres://... \
   -e UPSTASH_REDIS_REST_URL=... \
   -e UPSTASH_REDIS_REST_TOKEN=... \
@@ -47,8 +48,7 @@ docker run -p 3000:3000 -p 8080:8080 \
 ### Keep-Alive (cron-job.org)
 Example job hitting every 5 minutes:
 ```
-GET https://your-domain.example.com/keep-alive
-Every 5 minutes
+https://your-domain.example.com/keep-alive
 ```
 Direct URL example:
 ```
@@ -59,5 +59,13 @@ https://cron-job.org/en/members/jobs/add?url=https%3A%2F%2Fyour-domain.example.c
 - Redis holds use `SET NX` with `EX` TTL
 - DB transaction guards duplicate purchases
 - Broadcast events: `seat-held`, `seat-released`, `seat-sold`
+
+### Frontend Notes
+- API calls use relative paths, so the same origin serves API + UI
+- WebSocket URL is auto-detected (ws/wss + host)
+- Prices are displayed in INR using `Intl.NumberFormat('en-IN', { currency: 'INR' })`
+
+### Admin / Demo Tools
+- Trip reset endpoint (dangerous): `POST /trips/:id/reset-purchases` (exposed with a "Reset Trip (Demo)" button on the trip page)
 
 
