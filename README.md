@@ -30,6 +30,10 @@ Production-ready backend-first ticketing system with seat holds, purchases, PDF 
 cd backend
 npm install
 node index.js
+and for frontend
+cd frontend
+npm install
+npm start
 ```
 
 ### Docker
@@ -45,11 +49,6 @@ docker run -p 3000:3000 -p 8080:8080 \
 ```
 
 ### Keep-Alive (cron-job.org)
-Example job hitting every 5 minutes:
-```
-GET https://your-domain.example.com/keep-alive
-Every 5 minutes
-```
 Direct URL example:
 ```
 https://cron-job.org/en/members/jobs/add?url=https%3A%2F%2Fyour-domain.example.com%2Fkeep-alive&schedule=*/5+*+*+*+*
