@@ -31,6 +31,10 @@ Production-ready backend-first ticketing system with seat holds, purchases, PDF 
 cd backend
 npm install
 node index.js
+and for frontend
+cd frontend
+npm install
+npm start
 ```
 
 ### Docker
