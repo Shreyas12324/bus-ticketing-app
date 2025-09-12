@@ -134,7 +134,9 @@ const TripList = () => {
               <p style={{ margin: '4px 0', color: '#495057' }}><strong>Bus Type:</strong> {trip.busType}</p>
               <p style={{ margin: '4px 0', color: '#495057' }}><strong>Departure:</strong> {new Date(trip.departureTime).toLocaleString()}</p>
               <p style={{ margin: '4px 0', color: '#495057' }}><strong>Arrival:</strong> {new Date(trip.arrivalTime).toLocaleString()}</p>
-              <p style={{ margin: '4px 0', color: '#495057' }}><strong>Price per seat:</strong> ${trip.pricePerSeat}</p>
+              <p style={{ margin: '4px 0', color: '#495057' }}>
+                <strong>Price per seat:</strong> {new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(trip.pricePerSeat)}
+              </p>
             </Link>
           ))}
         </div>

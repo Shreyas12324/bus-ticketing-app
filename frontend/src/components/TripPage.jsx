@@ -248,7 +248,9 @@ const TripPage = () => {
             <p><strong>Bus Type:</strong> {trip.busType}</p>
             <p><strong>Departure:</strong> {new Date(trip.departureTime).toLocaleString()}</p>
             <p><strong>Arrival:</strong> {new Date(trip.arrivalTime).toLocaleString()}</p>
-            <p><strong>Price per seat:</strong> ${trip.pricePerSeat}</p>
+            <p>
+              <strong>Price per seat:</strong> {new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(trip.pricePerSeat)}
+            </p>
             <p><strong>Sale duration:</strong> {trip.saleDuration} minutes</p>
           </div>
           <div style={{ background: 'rgba(0,0,0,0.35)', border: '1px solid rgba(255,255,255,0.2)', padding: 12, borderRadius: 10 }}>
