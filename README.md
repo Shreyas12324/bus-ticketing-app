@@ -51,7 +51,8 @@ docker run -p 3000:3000 -p 8080:8080 \
 ### Keep-Alive (cron-job.org)
 Direct URL example:
 ```
-https://cron-job.org/en/members/jobs/add?url=https%3A%2F%2Fyour-domain.example.com%2Fkeep-alive&schedule=*/5+*+*+*+*
+https://bus-ticketing-app-odk3.onrender.com/keep-alive
+
 ```
 
 ### Production Notes
