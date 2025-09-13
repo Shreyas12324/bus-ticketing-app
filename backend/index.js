@@ -3,9 +3,10 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const path = require('path');
+
 require('dotenv').config();
 
-const { initializeDatabase } = require('./db');
+const { initializeDatabase,sequelize } = require('./db');
 const http = require('http');
 const { attachWebSocket } = require('./websocket-server');
 
@@ -35,8 +36,14 @@ app.get('/health', (req, res) => {
 });
 
 // Keep-alive route
-app.get('/keep-alive', (req, res) => {
-	res.status(200).json({ ok: true, ts: Date.now() });
+app.get('/keep-alive', async (req, res) => {
+  try {
+    await sequelize.authenticate();
+    res.status(200).json({ ok: true, ts: Date.now() });
+  } catch (error) {
+    console.error('Keep-alive DB check failed:', error);
+    res.status(500).json({ ok: false, error: 'DB not responding' });
+  }
 });
 
 // Mount routers
